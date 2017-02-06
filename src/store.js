@@ -1,20 +1,21 @@
-import { render } from './index.js'
-
-export default function createStore(reducer){
+export const createStore = (reducer) => {
     let state;
+    let listeners = [];
+    const getState = () => state;
 
-    function dispatch(action){
-      state = reducer(state, action)
-      console.log(`the action is`)
-      console.log(action)
-      console.log(`the state is`)
-      console.log(state)
-      render()
-    }
+    const dispatch = (action) => {
+        state = reducer(state, action);
+        listeners.forEach(listener => listener())
+    };
 
-    function getState(){
-      return state;
-    }
+    const subscribe = (listener) => {
+        listeners.push(listener);
+    };
 
-    return {dispatch: dispatch, getState: getState}
-  }
+    dispatch({});
+    return {
+        getState: getState,
+        dispatch: dispatch,
+        subscribe: subscribe
+    };
+}
